@@ -1,7 +1,7 @@
 var map = require('vinyl-map');
 var es = require('event-stream');
 var rename = require('gulp-rename');
-var atml = require('atml');
+var domly = require('domly');
 var extend = require('xtend');
 
 var outputTypes = ['amd', 'commonjs', 'node', 'bare'];
@@ -19,7 +19,7 @@ module.exports = function(options) {
   var compileHandlebars = function(contents, path) {
     // Perform pre-compilation
     // This will throw if errors are encountered
-    var compiled = atml.precompile(contents.toString(), options.compilerOptions);
+    var compiled = domly.precompile(contents.toString(), options.compilerOptions);
 
     // Handle different output times
     if (options.outputType === 'amd') {
@@ -35,9 +35,9 @@ module.exports = function(options) {
     return compiled;
   };
 
-  var doRename = function(dir, base, ext) {
+  var doRename = function(path) {
     // Change the extension to .js
-    return base+'.js';
+    path.extname = '.js';
   };
 
   return es.pipeline(
