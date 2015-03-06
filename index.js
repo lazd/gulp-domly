@@ -1,47 +1,40 @@
-var map = require('vinyl-map');
-var es = require('event-stream');
-var rename = require('gulp-rename');
-var domly = require('domly');
-var extend = require('xtend');
+var through2 = require('through2');
+var gutil = require('gulp-util');
 
-var outputTypes = ['amd', 'commonjs', 'node', 'bare'];
+const PLUGIN_NAME = 'gulp-domly';
 
 module.exports = function(options) {
-  options = extend({
-    compilerOptions: {},
-    outputType: 'bare' // amd, commonjs, node, bare
-  }, options);
+  'use strict';
 
-  if (outputTypes.indexOf(options.outputType) === -1) {
-    throw new Error('Invalid output type: '+options.outputType);
-  }
+  options = options || {};
+  var compilerOptions = options.compilerOptions || {};
+  var domly = options.domly || require('domly');
 
-  var compileHandlebars = function(contents, path) {
-    // Perform pre-compilation
-    // This will throw if errors are encountered
-    var compiled = domly.precompile(contents.toString(), options.compilerOptions);
-
-    // Handle different output times
-    if (options.outputType === 'amd') {
-      compiled = "define(function() {return "+compiled+";});";
+  var compileDOMly = function(file, enc, callback) {
+    if (file.isStream()) {
+      this.emit('error', new gutil.PluginError(PLUGIN_NAME, 'Streaming not supported'));
+      return callback();
     }
-    else if (options.outputType === 'commonjs') {
-      compiled = "module.exports = function() {return "+compiled+";};";
-    }
-    else if (options.outputType === 'node') {
-      compiled = "module.exports = "+compiled+";";
+    else if (file.isBuffer()) {
+      var compiled = null;
+      try {
+        // Perform pre-compilation
+        // This will throw if errors are encountered
+        compiled = domly.precompile(file.contents.toString(), options.compilerOptions);
+      }
+      catch (err) {
+        this.emit('error', new gutil.PluginError(PLUGIN_NAME, err, {
+          fileName: file.path
+        }));
+        return callback();
+      }
+
+      file.contents = new Buffer(compiled);
+      file.path = gutil.replaceExtension(file.path, '.js');
     }
 
-    return compiled;
+    callback(null, file);
   };
 
-  var doRename = function(path) {
-    // Change the extension to .js
-    path.extname = '.js';
-  };
-
-  return es.pipeline(
-    map(compileHandlebars),
-    rename(doRename)
-  );
+  return through2.obj(compileDOMly);
 };

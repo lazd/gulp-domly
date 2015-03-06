@@ -1,4 +1,4 @@
 Parse error on line 1:
 data.syntaxErr(
 ---------------^
-Expecting ')', ',', 'VAR', got 'EOF'
+Expecting ')', 'SINGLE_QUOTED_STRING', 'DOUBLE_QUOTED_STRING', 'NUMBER', ',', 'VAR', got 'EOF'

@@ -1,7 +1,6 @@
-var atmlPlugin = require('../');
+var domly = require('../');
 var should = require('should');
 var gutil = require('gulp-util');
-var os = require('os');
 var fs = require('fs');
 var path = require('path');
 require('mocha');
@@ -25,19 +24,11 @@ var fileMatchesExpected = function(file, fixtureFilename) {
   String(file.contents).should.equal(getExpectedString(fixtureFilename));
 };
 
-describe('gulp-atml', function() {
-  describe('atmlPlugin()', function() {
-
-    it('should throw on invalid input type', function() {
-      (function() {
-        atmlPlugin({
-          outputType: 'cow'
-        });
-      }).should.throw();
-    });
+describe('gulp-domly', function() {
+  describe('domly()', function() {
 
     it('should emit an error when compiling invalid templates', function(done) {
-      var stream = atmlPlugin({
+      var stream = domly({
         outputType: 'bare'
       });
 
@@ -54,7 +45,7 @@ describe('gulp-atml', function() {
     });
 
     it('should compile bare templates', function(done) {
-      var stream = atmlPlugin({
+      var stream = domly({
         outputType: 'bare'
       });
 
@@ -71,7 +62,7 @@ describe('gulp-atml', function() {
     });
 
     it('should compile multiple bare templates', function(done) {
-      var stream = atmlPlugin({
+      var stream = domly({
         outputType: 'bare'
       });
 
@@ -91,57 +82,6 @@ describe('gulp-atml', function() {
       });
       stream.write(basicTemplate);
       stream.write(basicTemplate2);
-      stream.end();
-    });
-
-    it('should compile templates for AMD', function(done) {
-      var stream = atmlPlugin({
-        outputType: 'amd'
-      });
-
-      var basicTemplate = getFixture('Basic.html');
-
-      stream.on('data', function(newFile) {
-        should.exist(newFile);
-        should.exist(newFile.contents);
-        fileMatchesExpected(newFile, 'Basic_amd.js');
-        done();
-      });
-      stream.write(basicTemplate);
-      stream.end();
-    });
-
-    it('should compile templates for CommonJS', function(done) {
-      var stream = atmlPlugin({
-        outputType: 'commonjs'
-      });
-
-      var basicTemplate = getFixture('Basic.html');
-
-      stream.on('data', function(newFile) {
-        should.exist(newFile);
-        should.exist(newFile.contents);
-        fileMatchesExpected(newFile, 'Basic_commonjs.js');
-        done();
-      });
-      stream.write(basicTemplate);
-      stream.end();
-    });
-
-    it('should compile templates for Node', function(done) {
-      var stream = atmlPlugin({
-        outputType: 'node'
-      });
-
-      var basicTemplate = getFixture('Basic.html');
-
-      stream.on('data', function(newFile) {
-        should.exist(newFile);
-        should.exist(newFile.contents);
-        fileMatchesExpected(newFile, 'Basic_node.js');
-        done();
-      });
-      stream.write(basicTemplate);
       stream.end();
     });
 

@@ -1,19 +1,17 @@
 {
   "name": "gulp-domly",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "DOMly plugin for gulp",
   "main": "index.js",
   "dependencies": {
-    "vinyl-map": "1.0.1",
-    "domly": "~0.0.0",
-    "xtend": "~2.1.2",
-    "gulp-rename": "~1.1.0",
-    "event-stream": "~3.1.0"
+    "domly": "^0.0.8",
+    "gulp-util": "^3.0.4",
+    "through2": "^0.6.3"
   },
   "devDependencies": {
-    "gulp-util": "~2.2.12",
-    "should": "~2.1.1",
-    "mocha": "~1.15.1"
+    "gulp-util": "^3.0.4",
+    "should": "^5.1.0",
+    "mocha": "^2.1.0"
   },
   "scripts": {
     "test": "./node_modules/.bin/mocha"
@@ -32,6 +30,6 @@
     "url": "https://github.com/lazd/gulp-domly/issues"
   },
   "engines": {
-    "node": ">=0.9"
+    "node": ">=0.10"
   }
 }
